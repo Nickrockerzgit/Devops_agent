@@ -91,12 +91,28 @@ app.use('/api/agent', agentRoutes);
 
 // Serve static files from frontend build (production)
 const path = require('path');
-app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.static(path.join(__dirname, '../public'), {
+  setHeaders: (res, filePath) => {
+    // Set correct MIME types
+    if (filePath.endsWith('.css')) {
+      res.setHeader('Content-Type', 'text/css');
+    } else if (filePath.endsWith('.js')) {
+      res.setHeader('Content-Type', 'application/javascript');
+    } else if (filePath.endsWith('.json')) {
+      res.setHeader('Content-Type', 'application/json');
+    }
+  }
+}));
 
-// Catch-all route for frontend (SPA routing) - must be after API routes
+// Catch-all route for frontend (SPA routing) - must be after API routes and static files
 app.get('*', (req, res, next) => {
   // Skip if it's an API route
   if (req.path.startsWith('/api/')) {
+    return next();
+  }
+  
+  // Skip if requesting a static file (has file extension like .css, .js, .png, etc.)
+  if (path.extname(req.path)) {
     return next();
   }
   
