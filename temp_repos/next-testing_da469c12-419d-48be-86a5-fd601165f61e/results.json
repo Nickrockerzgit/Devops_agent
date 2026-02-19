@@ -1,0 +1,59 @@
+{
+  "repository": "https://github.com/Nickrockerzgit/next-testing.git",
+  "team_name": "Test",
+  "team_leader": "Rishabh",
+  "branch_name": "TEST_RISHABH_AI_Fix",
+  "total_failures": 4,
+  "total_fixes_applied": 0,
+  "iterations_used": 1,
+  "retry_limit": 5,
+  "ci_cd_status": "FAILED",
+  "total_time_seconds": 74,
+  "score": {
+    "base": 100,
+    "speed_bonus": 10,
+    "efficiency_penalty": 0,
+    "final_score": 110
+  },
+  "fixes": [
+    {
+      "file": "src/__tests__/validator.test.ts",
+      "bug_type": "TYPE_ERROR",
+      "line": 12,
+      "commit_message": "[DETECTED] TYPE_ERROR error in src/__tests__/validator.test.ts:12",
+      "status": "DETECTED",
+      "description": "fix type mismatch"
+    },
+    {
+      "file": "src/__tests__/validator.test.ts",
+      "bug_type": "TYPE_ERROR",
+      "line": 6,
+      "commit_message": "[DETECTED] TYPE_ERROR error in src/__tests__/validator.test.ts:6",
+      "status": "DETECTED",
+      "description": "fix type mismatch"
+    },
+    {
+      "file": "src/__tests__/calculator.test.ts",
+      "bug_type": "TYPE_ERROR",
+      "line": 11,
+      "commit_message": "[DETECTED] TYPE_ERROR error in src/__tests__/calculator.test.ts:11",
+      "status": "DETECTED",
+      "description": "fix type mismatch"
+    },
+    {
+      "file": "src/__tests__/calculator.test.ts",
+      "bug_type": "TYPE_ERROR",
+      "line": 6,
+      "commit_message": "[DETECTED] TYPE_ERROR error in src/__tests__/calculator.test.ts:6",
+      "status": "DETECTED",
+      "description": "fix type mismatch"
+    }
+  ],
+  "timeline": [
+    {
+      "iteration": 1,
+      "status": "FAILED_RUN",
+      "timestamp": "2026-02-19T21:21:35.530Z"
+    }
+  ]
+}

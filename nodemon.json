@@ -1,0 +1,9 @@
+{
+  "watch": ["src", "prisma/schema.prisma"],
+  "ignore": ["temp_repos/**", "node_modules/**", "*.test.js"],
+  "ext": "js,json,prisma",
+  "delay": "1000",
+  "env": {
+    "NODE_ENV": "development"
+  }
+}

@@ -1,0 +1,125 @@
+// This is your Prisma schema file for MySQL / TiDB
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")  // .env mein mysql://user:pass@host:port/dbname daal dena
+}
+
+// Exact bug types from hackathon requirements (MySQL ENUM banega)
+enum BugType {
+  LINTING
+  SYNTAX
+  LOGIC
+  TYPE_ERROR
+  IMPORT
+  INDENTATION
+}
+
+// Status enum – common for fixes + CI/CD runs
+enum Status {
+  DETECTED  // Bug detected but not fixed yet
+  FIXED     // ✓ Fixed (green)
+  FAILED    // ✗ Failed (red)
+  PASSED    // Final/iteration success (green badge)
+  FAILED_RUN // CI/CD fail (red badge) – alag rakha clarity ke liye
+  RUNNING   // Ongoing run
+}
+
+// User model – authentication + team info
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String   // bcrypt hashed password store karna (backend mein)
+  name      String   // Team Leader name e.g. "Saiyam Kumar"
+  teamName  String   // e.g. "RIFT ORGANISERS"
+  role      String?  @default("leader") // "leader", "judge", "admin" etc.
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  otp           String?   @db.VarChar(6)
+  otpCreatedAt  DateTime?
+
+  runs      Run[]
+
+  @@index([email])
+  @@index([teamName])
+  @@map("users")
+}
+
+// Main Run model – ek agent run ka complete record
+model Run {
+  id                 String    @id @default(uuid())
+  repoUrl            String
+  teamName           String
+  leaderName         String
+  branchName         String    // Exactly: TEAM_NAME_LEADER_NAME_AI_Fix (uppercase + underscores)
+  failuresDetected   Int       @default(0)
+  fixesApplied       Int       @default(0)
+  commitCount        Int       @default(0)     // Yeh penalty calculate karne ke liye zaroori (20 se zyada → -2 each)
+  finalStatus        Status    @default(RUNNING)
+  timeTaken          String?   // "4m 32s" format – string rakha easy display ke liye
+  durationSeconds    Int?      // Numerical seconds – score calc ke liye helpful
+  baseScore          Int       @default(100)
+  speedBonus         Int       @default(0)     // +10 if duration < 300 seconds
+  efficiencyPenalty  Int       @default(0)     // -2 per commit over 20
+  finalScore         Int       @default(100)
+  retryLimit         Int       @default(5)
+  iterationsUsed     Int       @default(0)
+  resultsJsonPath    String?   // Optional: "./runs/{id}/results.json" jaise path
+  errorMessage       String?   // Agar poora run fail hua to global error
+
+  userId             String
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  fixes              Fix[]
+  iterations         Iteration[]
+
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  @@index([repoUrl])
+  @@index([teamName, leaderName])
+  @@index([userId])
+  @@index([branchName])     // Branch unique search ke liye
+  @@map("runs")
+}
+
+// Individual fixes table
+model Fix {
+  id             String   @id @default(uuid())
+  file           String
+  bugType        BugType
+  lineNumber     Int?
+  commitMessage  String
+  status         Status   @default(FIXED)
+  description    String?  // "LINTING error in src/utils.py line 15 → Fix: remove the import statement"
+
+  runId          String
+  run            Run      @relation(fields: [runId], references: [id], onDelete: Cascade)
+
+  createdAt      DateTime @default(now())
+
+  @@index([runId])
+  @@index([bugType])
+  @@map("fixes")
+}
+
+// CI/CD retry iterations (timeline ke liye)
+model Iteration {
+  id              String   @id @default(uuid())
+  iterationNumber Int      // 1, 2, 3...
+  status          Status
+  timestamp       DateTime @default(now())
+  details         String?  // "Build failed at test step" etc.
+  logSnippet      String?  // Short error log part
+
+  runId           String
+  run             Run      @relation(fields: [runId], references: [id], onDelete: Cascade)
+
+  @@index([runId])
+  @@index([timestamp])
+  @@map("iterations")
+}
