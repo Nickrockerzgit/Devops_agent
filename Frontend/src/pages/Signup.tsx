@@ -2,19 +2,33 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Bot, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function Signup() {
     const navigate = useNavigate();
+    const { register } = useAuth();
     const [loading, setLoading] = useState(false);
-    const [form, setForm] = useState({ name: '', email: '', password: '' });
+    const [error, setError] = useState('');
+    const [form, setForm] = useState({ 
+        name: '', 
+        email: '', 
+        password: '', 
+        teamName: '' 
+    });
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setError('');
         setLoading(true);
-        setTimeout(() => {
-            setLoading(false);
+        
+        try {
+            await register(form.name, form.email, form.password, form.teamName);
             navigate('/heal');
-        }, 1500);
+        } catch (err: any) {
+            setError(err.message || 'Registration failed');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -44,6 +58,12 @@ export default function Signup() {
                         </p>
                     </div>
 
+                    {error && (
+                        <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/30 text-destructive text-sm font-mono mb-6">
+                            {error}
+                        </div>
+                    )}
+
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
                             <label className="block text-xs font-mono text-muted-foreground mb-1.5">
@@ -54,6 +74,20 @@ export default function Signup() {
                                 placeholder="Saiyam Kumar"
                                 value={form.name}
                                 onChange={(e) => setForm({ ...form, name: e.target.value })}
+                                required
+                                disabled={loading}
+                                className="w-full rounded-md border border-border bg-muted px-3 py-2 text-sm font-mono text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary disabled:opacity-50"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-mono text-muted-foreground mb-1.5">
+                                Team Name
+                            </label>
+                            <input
+                                type="text"
+                                placeholder="Code Warriors"
+                                value={form.teamName}
+                                onChange={(e) => setForm({ ...form, teamName: e.target.value })}
                                 required
                                 disabled={loading}
                                 className="w-full rounded-md border border-border bg-muted px-3 py-2 text-sm font-mono text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary disabled:opacity-50"

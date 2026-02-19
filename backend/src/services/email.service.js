@@ -14,7 +14,7 @@ const transporter = nodemailer.createTransport({
 
 const sendOTPEmail = async (to, otp, name) => {
   const mailOptions = {
-    from: `"DevOps Agent" <${config.EMAIL.USER}>`,
+    from: config.EMAIL.FROM,
     to,
     subject: "Your OTP for DevOps Agent Authentication",
     html: `

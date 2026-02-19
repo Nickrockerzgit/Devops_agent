@@ -2,19 +2,28 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Bot, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function Login() {
     const navigate = useNavigate();
+    const { login } = useAuth();
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
     const [form, setForm] = useState({ email: '', password: '' });
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setError('');
         setLoading(true);
-        setTimeout(() => {
-            setLoading(false);
+        
+        try {
+            await login(form.email, form.password);
             navigate('/heal');
-        }, 1500);
+        } catch (err: any) {
+            setError(err.message || 'Login failed');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -43,6 +52,12 @@ export default function Login() {
                             Log in to your agent dashboard
                         </p>
                     </div>
+
+                    {error && (
+                        <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/30 text-destructive text-sm font-mono">
+                            {error}
+                        </div>
+                    )}
 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div>

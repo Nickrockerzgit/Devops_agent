@@ -1,0 +1,27 @@
+{
+  "name": "devops-agent-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "Frontend"
+  ],
+  "scripts": {
+    "setup": "node -e \"console.log('Run ./setup.sh (Linux/Mac) or setup.bat (Windows) to setup the project')\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd Frontend && npm run dev",
+    "build:backend": "cd backend && npm run build",
+    "build:frontend": "cd Frontend && npm run build",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "prisma:studio": "cd backend && npx prisma studio",
+    "test:backend": "cd backend && npm test",
+    "test:frontend": "cd Frontend && npm test"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}

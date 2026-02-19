@@ -20,6 +20,7 @@ enum BugType {
 
 // Status enum – common for fixes + CI/CD runs
 enum Status {
+  DETECTED  // Bug detected but not fixed yet
   FIXED     // ✓ Fixed (green)
   FAILED    // ✗ Failed (red)
   PASSED    // Final/iteration success (green badge)

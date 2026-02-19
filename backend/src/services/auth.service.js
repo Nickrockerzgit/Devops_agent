@@ -27,11 +27,21 @@ class AuthService {
       },
     });
 
-    return {
+    // Generate token for immediate login after registration
+    const token = generateToken({
       userId: user.id,
       email: user.email,
-      name: user.name,
       teamName: user.teamName,
+    });
+
+    return {
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        teamName: user.teamName,
+      },
     };
   }
 
