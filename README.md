@@ -1,497 +1,262 @@
-# 🤖 AUTONOMOUS DEVOPS AGENT - RIFT 2026 HACKATHON
+# AUTONOMOUS DEVOPS AGENT - RIFT 2026 HACKATHON
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20Here-blue)](YOUR_DEPLOYMENT_URL_HERE)
-[![Video Demo](https://img.shields.io/badge/Video-LinkedIn-0077B5)](YOUR_LINKEDIN_VIDEO_URL)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20Here-blue)]((https://devops-agent-h3vq.onrender.com/))
+[![Video Demo](https://img.shields.io/badge/Video-LinkedIn-0077B5)]()
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+# Autonomous DevOps Agent — Consolidated Documentation
 
-> An AI-powered autonomous DevOps agent that automatically detects, fixes, and verifies code issues in CI/CD pipelines.
+This repository contains an Autonomous DevOps Agent built for the RIFT 2026 Hackathon. The agent automates repository analysis, test execution, failure classification, fix generation, and CI/CD monitoring. The repository includes a React dashboard and a Node.js backend that orchestrates agent workflows.
 
-**🏆 Built for RIFT 2026 Hackathon - AI/ML Track**
+Table of contents
 
-## 📋 Table of Contents
+- Overview
+- Live deployment
+- Demo video guidance
+- Architecture
+- Features
+- Tech stack
+- Installation
+- Environment
+- Usage
+- Supported bug types
+- API reference
+- Known limitations
+- Team members
+- Deliverables (files)
+- License and contact
 
-- [Overview](#overview)
-- [Live Deployment](#live-deployment)
-- [Demo Video](#demo-video)
-- [Architecture](#architecture)
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Installation](#installation)
-- [Environment Setup](#environment-setup)
-- [Usage](#usage)
-- [Supported Bug Types](#supported-bug-types)
-- [API Reference](#api-reference)
-- [Known Limitations](#known-limitations)
-- [Team Members](#team-members)
-- [License](#license)
+----
 
----
+Overview
 
-## 🎯 Overview
+The Autonomous DevOps Agent performs the following high-level steps for a submitted repository:
 
-This project implements an **Autonomous DevOps Agent** that:
+- Clone the repository
+- Detect language and test frameworks
+- Run tests inside a sandboxed environment
+- Classify test failures using AI
+- Generate and apply patches where appropriate
+- Commit and push fixes to a new branch
+- Monitor CI/CD and iterate until success or retry limit
+- Export run results as `results.json` for analysis or scoring
 
-✅ Takes a GitHub repository URL as input  
-✅ Clones and analyzes the repository structure  
-✅ Discovers and runs all test files automatically  
-✅ Identifies failures and generates targeted fixes using AI  
-✅ Commits fixes with `[AI-AGENT]` prefix and pushes to a new branch  
-✅ Monitors CI/CD pipeline and iterates until all tests pass  
-✅ Displays comprehensive results in a production-ready React dashboard
+Live deployment
 
----
+- Frontend (React dashboard): update deployment URL in this README when available.
+- Backend (Agent API): update deployment URL in this README when available.
 
-## 🚀 Live Deployment
+Demo video guidance
 
-- **Frontend (React Dashboard):** [YOUR_VERCEL_URL_HERE](YOUR_VERCEL_URL_HERE)
-- **Backend (Agent API):** [YOUR_RAILWAY_URL_HERE](YOUR_RAILWAY_URL_HERE)
-- **Status:** ✅ Production Ready
+See `docs/LINKEDIN_VIDEO.md` for a full checklist and script. The video should show a short run, architecture overview, and final dashboard results. Ensure the post is public and includes repository and deployment links.
 
-> **Note:** Update these URLs after deployment!
+Architecture
 
----
-
-## 🎥 Demo Video
-
-📹 **LinkedIn Video Demonstration:** [Watch Here](YOUR_LINKEDIN_VIDEO_URL)
-
-**What's covered in the video:**
-- Live demo of the agent analyzing a real repository
-- Architecture walkthrough
-- Agent workflow demonstration
-- Results dashboard showcase
-- Multi-agent system explanation
-
-> Tagged: [@RIFT2026](https://linkedin.com)
-
----
-
-## 🏗️ Architecture
-
-### High-Level System Design
+Mermaid diagram (also available at `docs/ARCHITECTURE.mmd`):
 
 ```mermaid
-graph TB
-    A[React Dashboard] -->|HTTPS| B[Express.js API]
-    B --> C[Agent Service]
-    C --> D[Git Clone Module]
-    C --> E[Test Runner]
-    C --> F[AI Classifier]
-    F --> G[OpenAI GPT-4]
-    C --> H[Fix Generator]
-    H --> G
-    C --> I[Git Operations]
-    I --> J[GitHub Repository]
-    E --> K[Docker Sandbox]
-    B --> L[(MySQL Database)]
-    C --> M[results.json]
-    
-    style A fill:#61dafb,stroke:#333,stroke-width:2px
-    style G fill:#10a37f,stroke:#333,stroke-width:2px
-    style K fill:#2496ed,stroke:#333,stroke-width:2px
-    style L fill:#00758f,stroke:#333,stroke-width:2px
+flowchart LR
+    subgraph Frontend
+      A[React Dashboard] -->|REST / WebSocket| B[Express API]
+    end
+
+    subgraph Backend
+      B --> C[Agent Service]
+      C --> D[Analyzer Agent]
+      C --> E[Test Runner]
+      C --> F[Classifier Agent]
+      C --> G[Fix Generator]
+      C --> H[Git Ops]
+      B --> I[Auth Service]
+      B --> J[Database (Prisma)]
+    end
+
+    D --> K[GitHub Repo]
+    E --> L[Docker Sandbox]
+    F --> M[OpenAI GPT]
+    G --> M
+    H --> K
+
+    classDef comp fill:#f9f,stroke:#333,stroke-width:1px
+    class C,D,E,F,G,H comp
 ```
 
-### Component Breakdown
+Features
 
-#### **1. Frontend (React + TypeScript)**
-- **Input Section:** Collects repo URL, team name, and leader name
-- **Terminal Logs:** Real-time agent phase tracking
-- **Run Summary Card:** Displays repo info, branch, failures, and CI status
-- **Score Panel:** Shows base score (100), speed bonus, efficiency penalty
-- **Fixes Table:** Lists all fixes with file, bug type, line number, status
-- **CI/CD Timeline:** Visual iteration tracking with pass/fail badges
+- Autonomous analysis and repair workflow
+- Multi-language support: JavaScript, TypeScript, Python (basic Java support)
+- Bug classification and patch generation using AI
+- Git integration for branch creation and commits
+- Sandboxed test execution using Docker
+- Results export and dashboard visualization
 
-#### **2. Backend (Node.js + Express)**
-- **Authentication:** JWT-based with OTP verification
-- **Agent Controller:** Handles `/api/agent/run` requests
-- **Agent Service:** Core autonomous agent logic
-- **Database:** Prisma ORM with MySQL for persistence
+Tech stack
 
-#### **3. Multi-Agent System**
-- **Analyzer Agent:** Scans repository structure and discovers test files
-- **Test Runner Agent:** Executes tests in sandboxed Docker environment
-- **Classifier Agent:** Uses GPT-4 to classify bugs into 6 categories
-- **Fix Generator Agent:** Generates code fixes using AI
-- **Git Operations Agent:** Handles branching, commits, and pushes
-- **CI/CD Monitor Agent:** Tracks pipeline status and retries
+Frontend: React 18, TypeScript, Vite, Tailwind CSS, shadcn/ui
 
-#### **4. Docker Sandbox**
-- Isolated environment for safe code execution
-- Pre-installed test frameworks (Jest, Pytest, ESLint, Flake8)
-- Git, Node.js, Python, Java support
+Backend: Node.js 18, Express, Prisma, MySQL, OpenAI SDK, simple-git, Docker
 
----
+Installation
 
-## ✨ Features
+Prerequisites
 
-### Core Capabilities
-- ✅ **Autonomous Analysis:** Zero human intervention required
-- ✅ **Multi-Language Support:** JavaScript, TypeScript, Python, Java
-- ✅ **6 Bug Types:** LINTING, SYNTAX, LOGIC, TYPE_ERROR, IMPORT, INDENTATION
-- ✅ **AI-Powered Fixes:** GPT-4 Turbo generates context-aware patches
-- ✅ **Git Integration:** Auto-creates branches with correct naming format
-- ✅ **Retry Logic:** Configurable iteration limit (default: 5)
-- ✅ **Performance Scoring:** Speed bonus + efficiency penalty calculation
-- ✅ **results.json Export:** Complete run data in standardized format
+- Node.js 18+
+- npm or pnpm
+- Docker (recommended for sandboxed test runs)
+- MySQL 8+ (or compatible SQL database)
 
-### Dashboard Features
-- ✅ **Responsive Design:** Mobile + desktop optimized
-- ✅ **Real-time Terminal Logs:** Live agent phase updates
-- ✅ **Visual Score Breakdown:** Circular progress chart
-- ✅ **CI/CD Timeline:** Iteration-by-iteration tracking
-- ✅ **Download Results:** One-click JSON export
+Backend (development)
 
----
+1. Install dependencies
 
-## 🛠️ Tech Stack
-
-### Frontend
-| Technology | Purpose |
-|------------|---------|
-| React 18 | UI framework |
-| TypeScript | Type safety |
-| Vite | Build tool |
-| Tailwind CSS | Styling |
-| shadcn/ui | Component library |
-| Framer Motion | Animations |
-| TanStack Query | State management |
-
-### Backend
-| Technology | Purpose |
-|------------|---------|
-| Node.js 18 | Runtime |
-| Express.js | Web framework |
-| Prisma | ORM |
-| MySQL | Database |
-| OpenAI GPT-4 | AI model |
-| simple-git | Git operations |
-| Docker | Sandboxed execution |
-| JWT | Authentication |
-
-### DevOps
-| Technology | Purpose |
-|------------|---------|
-| Docker | Containerization |
-| Vercel | Frontend hosting |
-| Railway | Backend hosting |
-| GitHub Actions | CI/CD (optional) |
-
----
-
-## 📦 Installation
-
-### Prerequisites
-- **Node.js** 18+ ([Download](https://nodejs.org/))
-- **MySQL** 8+ ([Download](https://dev.mysql.com/downloads/))
-- **Docker** ([Download](https://www.docker.com/))
-- **Git** ([Download](https://git-scm.com/))
-- **OpenAI API Key** ([Get Key](https://platform.openai.com/api-keys))
-
-### Clone Repository
-```bash
-git clone https://github.com/YOUR_USERNAME/devops-agent.git
-cd devops-agent
-```
-
-### Backend Setup
-
-#### 1. Install Dependencies
 ```bash
 cd backend
 npm install
 ```
 
-#### 2. Configure Environment
+2. Create environment file
+
 ```bash
 cp .env.example .env
+# Edit backend/.env: set DATABASE_URL, OPENAI_API_KEY, JWT_SECRET, GITHUB_TOKEN (if needed)
 ```
 
-Edit `.env` with your credentials:
-```env
-DATABASE_URL="mysql://user:password@localhost:3306/devops_agent"
-OPENAI_API_KEY="sk-your-key-here"
-JWT_SECRET="your-secret-key"
-PORT=5000
-FRONTEND_URL="http://localhost:5173"
-```
+3. Prisma / database
 
-#### 3. Setup Database
 ```bash
-# Generate Prisma client
-npm run prisma:generate
-
-# Run migrations
-npm run prisma:migrate
-
-# Or push schema directly (for development)
-npm run prisma:push
+cd backend
+npm run db:generate   # Generates Prisma client
+npm run db:migrate    # Runs migrations (development)
 ```
 
-#### 4. Start Backend
+4. Start backend
+
 ```bash
-npm run dev
+cd backend
+npm run dev           # nodemon src/server.js
+# or for production: npm run prod
 ```
 
-Backend will run at `http://localhost:5000`
+Frontend (development)
 
-### Frontend Setup
+1. Install dependencies
 
-#### 1. Install Dependencies
 ```bash
 cd Frontend
 npm install
 ```
 
-#### 2. Configure Environment
+2. Configure frontend env
+
 ```bash
+cd Frontend
 cp .env.example .env
+# Set VITE_API_URL (e.g. http://localhost:5000) and VITE_USE_REAL_BACKEND
 ```
 
-Edit `.env`:
-```env
-VITE_API_URL=http://localhost:5000
-VITE_USE_REAL_BACKEND=true  # Change to 'true' when backend is ready
-```
+3. Start frontend
 
-#### 3. Start Frontend
 ```bash
+cd Frontend
 npm run dev
 ```
 
-Frontend will run at `http://localhost:5173`
+Build frontend
 
-### Docker Deployment (Recommended for Production)
-
-#### Build and Run Backend
-```bash
-cd backend
-docker build -t devops-agent-backend .
-docker run -p 5000:5000 --env-file .env devops-agent-backend
-```
-
-#### Build and Run Frontend
 ```bash
 cd Frontend
 npm run build
-docker run -p 80:80 -v $(pwd)/dist:/usr/share/nginx/html nginx:alpine
 ```
 
-Or use Docker Compose (create `docker-compose.yml`):
-```yaml
-version: '3.8'
-services:
-  backend:
-    build: ./backend
-    ports:
-      - "5000:5000"
-    env_file:
-      - ./backend/.env
-    depends_on:
-      - db
-  
-  db:
-    image: mysql:8
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: devops_agent
-    ports:
-      - "3306:3306"
-  
-  frontend:
-    build: ./Frontend
-    ports:
-      - "80:80"
-```
+Docker
 
-Run with:
-```bash
-docker-compose up -d
-```
+See `docker-compose.yml` for a recommended composition. Docker is recommended for running the sandboxed test runner and database in isolation.
 
----
+Environment
 
-## ⚙️ Environment Setup
+Key backend variables (defaults in `backend/src/config/index.js`):
 
-### Backend Environment Variables
+- `DATABASE_URL` — MySQL connection string, e.g. `mysql://user:pass@localhost:3306/devops_agent` (required)
+- `OPENAI_API_KEY` — OpenAI API key used by the agent (required for real fixes)
+- `JWT_SECRET` — JWT signing secret (change for production)
+- `JWT_EXPIRES_IN` — Token expiry (default `7d`)
+- `PORT` — Backend port (default `5000`)
+- `FRONTEND_URL` — Frontend origin allowed for CORS (default `http://localhost:5173`)
+- `GITHUB_TOKEN` — Required for authenticated Git operations on private repos
+- `MAIL_HOST`, `MAIL_USER`, `MAIL_PASS`, `MAIL_FROM`, `MAIL_PORT` — Optional SMTP settings
+- `AGENT_RETRY_LIMIT` — Agent iteration limit (default `5`)
 
-| Variable | Description | Required | Default |
-|----------|-------------|----------|---------|
-| `DATABASE_URL` | MySQL connection string | ✅ Yes | - |
-| `OPENAI_API_KEY` | OpenAI API key for GPT-4 | ✅ Yes | - |
-| `JWT_SECRET` | Secret key for JWT signing | ✅ Yes | - |
-| `PORT` | Server port | ❌ No | 5000 |
-| `FRONTEND_URL` | CORS origin | ❌ No | http://localhost:5173 |
-| `AGENT_RETRY_LIMIT` | Max iterations | ❌ No | 5 |
-| `GITHUB_TOKEN` | For private repos | ❌ No | - |
-| `MAIL_HOST` | SMTP host | ❌ No | - |
-| `MAIL_USER` | Email username | ❌ No | - |
-| `MAIL_PASS` | Email password | ❌ No | - |
+Frontend env
 
-### Frontend Environment Variables
+- `VITE_API_URL` — Backend URL
+- `VITE_USE_REAL_BACKEND` — `true` or `false` (simulation/demo mode)
 
-| Variable | Description | Required | Default |
-|----------|-------------|----------|---------|
-| `VITE_API_URL` | Backend API URL | ✅ Yes | - |
-| `VITE_USE_REAL_BACKEND` | Use real backend (true) or simulation (false) | ❌ No | false |
+Security notes
 
----
+- Never commit secrets to source control. Use secret management offered by hosting platforms.
 
-## 🎮 Usage
+Usage
 
-### 1. Access Dashboard
-Navigate to `http://localhost:5173` (or your deployed URL)
+From the dashboard (default `http://localhost:5173`):
 
-### 2. Register/Login (Optional)
-- For protected agent runs, register an account
-- Or use simulation mode without authentication
+1. Paste repository URL
+2. Enter team name and leader name
+3. Click Run Agent
 
-### 3. Run Agent
-1. Enter **GitHub Repository URL** (e.g., `https://github.com/user/repo`)
-2. Enter **Team Name** (e.g., `RIFT ORGANISERS`)
-3. Enter **Team Leader Name** (e.g., `Saiyam Kumar`)
-4. Click **Run Agent**
+Expected workflow
 
-### 4. Monitor Progress
-- Watch real-time terminal logs
-- See agent phases: cloning → analyzing → running tests → classifying → generating fixes → committing → pushing → monitoring CI
+- Clone repository
+- Analyze and detect tests/failures
+- Run tests in Docker sandbox
+- Classify failures and generate candidate fixes
+- Commit and push changes to a new branch
+- Monitor CI/CD and iterate until success or retry limit
+- Download `results.json` from the dashboard for submission
 
-### 5. View Results
-- **Run Summary:** Repo, branch, failures, fixes, time
-- **Score Panel:** Final score with breakdown
-- **Fixes Table:** All applied fixes with status
-- **CI/CD Timeline:** Iteration tracking
-- **Download:** Click "results.json" to export
+API examples
 
-### Example Branch Name Generated
-```
-RIFT_ORGANISERS_SAIYAM_KUMAR_AI_Fix
-```
+- `POST /api/agent/run` — Protected. Triggers an agent run for a repository.
+- `POST /api/auth/register` — Register user.
+- `POST /api/auth/login` — Login and obtain JWT.
+- `GET /health` — Health check endpoint.
 
----
+Known limitations
 
-## 🐛 Supported Bug Types
+1. Private repo operations require `GITHUB_TOKEN`.
+2. AI-generated fixes are not guaranteed; complex fixes may need manual review.
+3. Large repositories may take longer; use small-to-medium repos for demos.
+4. Language support is optimized for JS/TS and Python.
 
-| Bug Type | Description | Example Fix |
-|----------|-------------|-------------|
-| **LINTING** | Code style violations | Remove unused import |
-| **SYNTAX** | Language syntax errors | Add missing colon |
-| **LOGIC** | Runtime logic errors | Fix off-by-one error |
-| **TYPE_ERROR** | Type mismatches | Cast to correct type |
-| **IMPORT** | Import/module errors | Update import path |
-| **INDENTATION** | Whitespace issues | Fix to 4 spaces |
+Team members
 
----
+| Name | Role | LinkedIn |
+|------|------|----------|
+| Your Name | Team Lead / Full-Stack | https://www.linkedin.com/in/rishabh-jhade |
+| Member 2 | Backend Engineer | https://www.linkedin.com/in/chanchal-gupta-5bb866269 |
+| Member 3 | Frontend Engineer | https://www.linkedin.com/in/vikram-sen-741bab228 |
+| Member 4 | DevOps / Infrastructure | https://linkedin.com/in/abhishekcse2004 |
 
-## 📡 API Reference
+Team name: DOMINATOR$
 
-### `POST /api/agent/run`
-Trigger the autonomous agent.
+Deliverables (files)
 
-**Headers:**
-```json
-{
-  "Authorization": "Bearer <JWT_TOKEN>",
-  "Content-Type": "application/json"
-}
-```
+- `docs/ARCHITECTURE.mmd` — architecture diagram
+- `docs/LINKEDIN_VIDEO.md` — video checklist and script
+- `docs/INSTALLATION.md` — installation and local deployment
+- `docs/ENVIRONMENT.md` — environment variables and security notes
+- `docs/USAGE.md` — usage examples and auth commands
+- `docs/SUPPORTED_BUGS.md` — supported bug types and examples
+- `docs/TECH_STACK.md` — tech stack rationale
+- `docs/LIMITATIONS.md` — known limitations and mitigations
+- `docs/TEAM.md` — team members file (update before submission)
+- `docs/README_DELIVERABLES.md` — deliverables index
 
-**Request Body:**
-```json
-{
-  "repoUrl": "https://github.com/user/repo",
-  "teamName": "RIFT ORGANISERS",
-  "leaderName": "Saiyam Kumar"
-}
-```
+License
 
-**Response:**
-```json
-{
-  "success": true,
-  "results": {
-    "repository": "https://github.com/user/repo",
-    "team_name": "RIFT ORGANISERS",
-    "team_leader": "Saiyam Kumar",
-    "branch_name": "RIFT_ORGANISERS_SAIYAM_KUMAR_AI_Fix",
-    "total_failures": 5,
-    "total_fixes_applied": 5,
-    "iterations_used": 2,
-    "retry_limit": 5,
-    "ci_cd_status": "PASSED",
-    "total_time_seconds": 245,
-    "score": {
-      "base": 100,
-      "speed_bonus": 10,
-      "efficiency_penalty": 0,
-      "final_score": 110
-    },
-    "fixes": [...],
-    "timeline": [...]
-  }
-}
-```
+This project is licensed under the MIT License. See `LICENSE` for details.
 
-### `POST /api/auth/register`
-Register a new user.
+Contact
 
-**Request Body:**
-```json
-{
-  "email": "user@example.com",
-  "password": "securepassword",
-  "name": "John Doe",
-  "teamName": "My Team"
-}
-```
-
-### `POST /api/auth/login`
-Login user.
-
-**Request Body:**
-```json
-{
-  "email": "user@example.com",
-  "password": "securepassword"
-}
-```
-
-**Response:**
-```json
-{
-  "success": true,
-  "token": "eyJhbGciOiJIUzI1NiIs...",
-  "user": { ... }
-}
-```
-
-### `GET /health`
-Health check endpoint.
-
-**Response:**
-```json
-{
-  "status": "healthy",
-  "uptime": 12345,
-  "timestamp": "2026-02-19T12:00:00.000Z"
-}
-```
-
----
-
-## ⚠️ Known Limitations
-
-1. **Authentication for Git Push:**
-   - Currently requires manual GitHub token setup for private repos
-   - Public repos work without authentication
-
-2. **Test Framework Detection:**
-   - Supports Jest, Pytest, ESLint, Flake8
-   - Custom test runners may need manual configuration
-
-3. **Fix Success Rate:**
-   - AI-generated fixes have ~85-90% success rate
-   - Complex logic bugs may require multiple iterations
+For questions or feedback, update the contact details in this README or see `docs/TEAM.md` for team links.
 
 4. **Performance:**
    - Large repositories (>1000 files) may take 5-10 minutes
@@ -507,7 +272,7 @@ Health check endpoint.
 
 ---
 
-## 👥 Team Members
+## Team Members
 
 | Name | Role | LinkedIn |
 |------|------|----------|
@@ -522,13 +287,13 @@ Health check endpoint.
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - **RIFT 2026 Organizers** for hosting this amazing hackathon
 - **OpenAI** for GPT-4 API access
@@ -538,7 +303,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-## 📞 Contact
+## Contact
 
 For questions or feedback:
 - **Email:** your.email@example.com
@@ -549,8 +314,25 @@ For questions or feedback:
 
 <div align="center">
 
-**Built with ❤️ for RIFT 2026 Hackathon**
+Built for RIFT 2026 Hackathon
 
 ⭐ Star this repo if you found it helpful!
 
 </div>
+
+## 📁 Deliverables (for RIFT submission)
+
+All required deliverables for the RIFT submission are provided as separate files in the `docs/` folder. They contain the exact items requested in the RIFT checklist (video checklist, architecture diagram, installation + env, usage examples, supported bug types, tech stack, known limitations, and team members).
+
+- Architecture diagram: `docs/ARCHITECTURE.mmd`
+- LinkedIn video checklist & script: `docs/LINKEDIN_VIDEO.md`
+- Installation: `docs/INSTALLATION.md`
+- Environment: `docs/ENVIRONMENT.md`
+- Usage examples: `docs/USAGE.md`
+- Supported bug types: `docs/SUPPORTED_BUGS.md`
+- Tech stack: `docs/TECH_STACK.md`
+- Known limitations: `docs/LIMITATIONS.md`
+- Team members (placeholder): `docs/TEAM.md`
+- Deliverables index: `docs/README_DELIVERABLES.md`
+
+Please review and update `docs/TEAM.md` with actual team member names and LinkedIn URLs before submission.
