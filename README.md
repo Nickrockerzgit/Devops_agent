@@ -319,20 +319,3 @@ Built for RIFT 2026 Hackathon
 ⭐ Star this repo if you found it helpful!
 
 </div>
-
-## 📁 Deliverables (for RIFT submission)
-
-All required deliverables for the RIFT submission are provided as separate files in the `docs/` folder. They contain the exact items requested in the RIFT checklist (video checklist, architecture diagram, installation + env, usage examples, supported bug types, tech stack, known limitations, and team members).
-
-- Architecture diagram: `docs/ARCHITECTURE.mmd`
-- LinkedIn video checklist & script: `docs/LINKEDIN_VIDEO.md`
-- Installation: `docs/INSTALLATION.md`
-- Environment: `docs/ENVIRONMENT.md`
-- Usage examples: `docs/USAGE.md`
-- Supported bug types: `docs/SUPPORTED_BUGS.md`
-- Tech stack: `docs/TECH_STACK.md`
-- Known limitations: `docs/LIMITATIONS.md`
-- Team members (placeholder): `docs/TEAM.md`
-- Deliverables index: `docs/README_DELIVERABLES.md`
-
-Please review and update `docs/TEAM.md` with actual team member names and LinkedIn URLs before submission.
